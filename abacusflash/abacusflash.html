@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abacus Flash — Edusmart Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── UI DESIGN TOKENS ── */
+:root {
+  --primary-orange: #FF8C2E;
+  --primary-gradient: linear-gradient(180deg, #FFAD4E 0%, #FF7A00 100%);
+  --bg-gradient: radial-gradient(circle at 10% 20%, #FFF9F3 0%, #F9FAFB 100%);
+  --card-shadow: 0 15px 35px rgba(255, 140, 46, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+  --text-dark: #2D3E50;
+  --text-muted: #8E9BAE;
+  --radius-lg: 32px;
+  --radius-md: 20px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* ── HEADER ── */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand { display: flex; align-items: center; gap: 15px; }
+.logo { width: 85px; height: 85px; object-fit: contain; }
+
+.brand h1 { font-size: 32px; font-weight: 700; color: #333; margin: 0;}
+.brand h1 span { color: var(--primary-orange); }
+.tagline { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 600; }
+
+.header-btns { display: flex; gap: 12px; }
+.btn-header {
+  background: white; border: 1px solid #E5E7EB; padding: 10px 18px;
+  border-radius: 12px; cursor: pointer; display: flex; align-items: center;
+  gap: 8px; font-weight: 600; font-size: 14px; color: #444; transition: 0.2s;
+}
+.btn-header:hover { background: #f9f9f9; transform: translateY(-2px); }
+
+/* ── STATS BAR ── */
+.settings-bar {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  box-shadow: var(--card-shadow);
+}
+.bar-item {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  border-right: 1px solid #F0F0F0;
+}
+.bar-item:last-child { border-right: none; }
+.bar-icon {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #FFF5EC; display: flex; align-items: center; justify-content: center;
+  color: var(--primary-orange); font-size: 18px;
+}
+.bar-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block;}
+.bar-value { font-size: 20px; font-weight: 700; }
+
+/* ── MAIN FLASH CARD (Target for Fullscreen) ── */
+#flash-scope {
+  background: white;
+  border-radius: var(--radius-lg);
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  text-align: center;
+  width: 100%;
+}
+
+/* ── FULLSCREEN LOGO STYLING ── */
+.fs-logo {
+    display: none; /* Hidden in normal view */
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+#flash-scope:fullscreen .fs-logo {
+    display: block; /* Shown only in fullscreen */
+}
+
+#flash-scope:fullscreen {
+    border-radius: 0;
+    background: white;
+}
+
+#flash-scope:fullscreen .flash-number { font-size: 40vh; }
+#flash-scope:fullscreen .ans-value { font-size: 30vh; }
+
+.grid-icon {
+    width: 110px; height: 110px;
+    background: #FFF8F2; border-radius: 18px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    padding: 12px; gap: 10px; margin: 0 auto 20px;
+}
+.grid-icon div {
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--primary-orange); font-size: 20px;
+}
+
+.flash-number {
+  font-size: 180px;
+  font-weight: 800;
+  color: var(--primary-orange);
+  display: none;
+  line-height: 1;
+}
+
+.answer-display {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+.ans-value { font-size: 130px; font-weight: 800; color: #10B981; line-height: 1; margin-bottom: 20px;}
+
+.done-badge { display: none; margin-bottom: 25px; font-size: 26px; font-weight: 600; color: #666; }
+
+/* ── CONTROL BUTTONS ── */
+.btn-start {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 18px 65px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(255, 122, 0, 0.2);
+  display: flex; align-items: center; gap: 12px; transition: 0.2s;
+}
+.btn-start:hover { transform: scale(1.05); }
+
+.btn-next {
+    background: #F3F4F6; color: #444; border: 1px solid #E5E7EB;
+    padding: 12px 30px; border-radius: 12px; font-weight: 600; cursor: pointer;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.5); backdrop-filter:blur(8px);
+  justify-content:center; align-items:center; z-index:3000;
+}
+.modal-overlay.active { display:flex; }
+.modal { background: white; padding: 40px; border-radius: 25px; width: 90%; max-width: 400px; }
+.save-btn { width: 100%; padding: 15px; background: var(--primary-orange); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px;}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <!-- MAIN HEADER LOGO -->
+      <img class="logo" src="images/Abacuslogo.png" alt="Academy Logo">
+      <div class="brand-text">
+        <h1>Abacus <span>Flash</span></h1>
+        <div class="tagline">Speed · Accuracy · Concentration</div>
+      </div>
+    </div>
+    <div class="header-btns">
+      <button class="btn-header" onclick="enterFullscreen()">⛶ Fullscreen</button>
+      <button class="btn-header" onclick="openSettings()">⚙ Settings</button>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="settings-bar">
+    <div class="bar-item">
+      <div class="bar-icon">☰</div>
+      <div class="bar-info"><span class="bar-label">Rows</span><span class="bar-value" id="info-rows">5</span></div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-icon">⠿</div>
+      <div class="bar-info"><span class="bar-label">Digits</span><span class="bar-value" id="info-digits">2D</span></div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-icon">⏱</div>
+      <div class="bar-info"><span class="bar-label">Speed</span><span class="bar-value"><span id="info-speed">1</span>s</span></div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-icon">⊟</div>
+      <div class="bar-info"><span class="bar-label">Borrow</span><span class="bar-value" id="info-borrow">No</span></div>
+    </div>
+  </div>
+
+  <!-- FLASH SCOPE (ONLY THIS VISIBLE IN FS) -->
+  <div id="flash-scope">
+    
+    <!-- FULLSCREEN LOGO -->
+    <img class="fs-logo" src="images/Abacuslogo.png" alt="Academy Logo">
+
+    <!-- Initial State -->
+    <div id="idle-state">
+        <div class="grid-icon">
+            <div>1</div><div>2</div>
+            <div>3</div><div>4</div>
+        </div>
+        <p style="font-size: 22px; font-weight: 500; margin-bottom: 30px;">Press Start Session to begin</p>
+        <button class="btn-start" id="btn-start" onclick="startFlash()">▶ Start Session</button>
+    </div>
+
+    <!-- Number Display -->
+    <div class="flash-number" id="flash-number"></div>
+
+    <!-- Done State -->
+    <div id="done-state" class="hidden">
+        <div class="done-badge" style="display: block;">Numbers Flashed!</div>
+        <button class="btn-start" onclick="showAnswer()">View Answer</button>
+    </div>
+
+    <!-- Answer Display -->
+    <div class="answer-display" id="answer-display">
+      <div class="ans-label">Correct Answer</div>
+      <div class="ans-value" id="answer-value">0</div>
+      <button class="btn-next" onclick="nextRound()">Next Question ➜</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 style="color: var(--primary-orange); margin-bottom: 20px;">Settings</h2>
+    <div class="set-group" style="margin-bottom: 15px;">
+      <label style="display: block; font-size: 12px; font-weight: 700; color: #666;">Rows</label>
+      <input type="number" id="set-rows" min="2" value="5" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+    </div>
+    <div class="set-group" style="margin-bottom: 15px;">
+      <label style="display: block; font-size: 12px; font-weight: 700; color: #666;">Digits</label>
+      <select id="set-digits" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+        <option value="1">1 Digit</option>
+        <option value="2" selected>2 Digits</option>
+        <option value="3">3 Digits</option>
+        <option value="4">4 Digits</option>
+      </select>
+    </div>
+    <div class="set-group" style="margin-bottom: 15px;">
+      <label style="display: block; font-size: 12px; font-weight: 700; color: #666;">Speed (s)</label>
+      <input type="number" id="set-speed" min="0.1" step="0.1" value="1.0" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <label style="font-size: 12px; font-weight: 700; color: #666;">Allow Borrow</label>
+      <input type="checkbox" id="set-borrow" style="width: 20px; height: 20px;">
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save & Close</button>
+  </div>
+</div>
+
+<script>
+let settings = { rows: 5, digits: 2, speed: 1, borrow: false };
+let numbers = [], signs = [], currentIndex = 0;
+
+function getRandomNumber(digits) {
+  const min = Math.pow(10, digits - 1);
+  const max = Math.pow(10, digits) - 1;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generateNumbers() {
+  numbers = []; signs = [];
+  let total = getRandomNumber(settings.digits);
+  numbers.push(total); signs.push('+');
+  for (let i = 1; i < settings.rows; i++) {
+    let num = getRandomNumber(settings.digits);
+    let sign = Math.random() < 0.5 ? '+' : '-';
+    if (!settings.borrow && sign === '-' && (total - num < 0)) sign = '+';
+    numbers.push(num);
+    signs.push(sign);
+    total += (sign === '+' ? num : -num);
+  }
+}
+
+function startFlash() {
+  generateNumbers();
+  currentIndex = 0;
+  document.getElementById('idle-state').classList.add('hidden');
+  document.getElementById('done-state').classList.add('hidden');
+  document.getElementById('answer-display').style.display = 'none';
+  showNextNumber();
+}
+
+function showNextNumber() {
+  const numEl = document.getElementById('flash-number');
+  if (currentIndex >= numbers.length) {
+    numEl.style.display = 'none';
+    document.getElementById('done-state').classList.remove('hidden');
+    return;
+  }
+  const val = (signs[currentIndex] === '-' ? '-' : '') + numbers[currentIndex];
+  numEl.textContent = val;
+  numEl.style.display = 'block';
+  setTimeout(() => {
+    numEl.style.display = 'none';
+    currentIndex++;
+    setTimeout(showNextNumber, 150); 
+  }, settings.speed * 1000);
+}
+
+function showAnswer() {
+  let total = numbers[0];
+  for (let i = 1; i < numbers.length; i++) {
+    total += (signs[i] === '+' ? numbers[i] : -numbers[i]);
+  }
+  document.getElementById('done-state').classList.add('hidden');
+  document.getElementById('answer-value').textContent = total;
+  document.getElementById('answer-display').style.display = 'flex';
+}
+
+function nextRound() {
+  document.getElementById('answer-display').style.display = 'none';
+  document.getElementById('idle-state').classList.remove('hidden');
+}
+
+function openSettings() { document.getElementById('modal-overlay').classList.add('active'); }
+function saveSettings() {
+  settings.rows = parseInt(document.getElementById('set-rows').value);
+  settings.digits = parseInt(document.getElementById('set-digits').value);
+  settings.speed = parseFloat(document.getElementById('set-speed').value);
+  settings.borrow = document.getElementById('set-borrow').checked;
+  document.getElementById('info-rows').textContent = settings.rows;
+  document.getElementById('info-digits').textContent = settings.digits + 'D';
+  document.getElementById('info-speed').textContent = settings.speed;
+  document.getElementById('info-borrow').textContent = settings.borrow ? 'Yes' : 'No';
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+function enterFullscreen() {
+    const el = document.getElementById('flash-scope');
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+</script>
+
+</body>
+</html>
